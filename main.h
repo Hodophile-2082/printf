@@ -15,4 +15,5 @@ int _printf(const char *format, ...);
 void print_char(va_list ap);
 void print_string(va_list ap);
 void print_percent(va_list ap);
+void print_binary(va_list ap);
 #endif
