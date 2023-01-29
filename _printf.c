@@ -1,5 +1,5 @@
 #include "main.h"
-#include <staarg.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 /**
@@ -19,6 +19,8 @@ int _printf(const char *format, ...)
 		{"s", print_string},
 		{"%", print_percent},
 		{"b", print_binary},
+		{"d", print_int},
+		{"i", print_int},
 		{NULL, NULL}
 	};
 	va_start(ap, format);
@@ -72,7 +74,7 @@ int _printf(const char *format, ...)
  */
 void print_char(va_list ap)
 {
-	printf("%c", va_arg(ap, int));
+	write(1, &ap, 1);
 }
 /**
  * print_string - prints a string
@@ -85,7 +87,7 @@ void print_string(va_list ap)
 	str = va_arg(ap, char *);
 	if (str == NULL)
 		str = "(nil)";
-	printf("%s", str);
+	write(1, str, strlen(str));
 }
 /**
  * print_percent - prints a percent
@@ -93,7 +95,7 @@ void print_string(va_list ap)
  */
 void print_percent(va_list ap)
 {
-	printf("%%");
+	write(1, "%", 1);
 }
 /**
  * print_binary - prints a number in binary
@@ -130,5 +132,37 @@ void print_binary(va_list ap)
 	f = n >> 9;
 	g = n >> 8;
 	h = n >> 7;
-	printf("%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d", i & 1, j & 1, k & 1, l & 1, m & 1, o & 1, p & 1, q & 1, r & 1, s & 1, t & 1, u & 1, v & 1, w & 1, x & 1, y & 1, z & 1, a & 1,b & 1, c & 1, d & 1, e & 1, f & 1, g & 1, h & 1, n & 1);
+	
+	write(1, &i, 1);
+	write(1, &j, 1);
+	write(1, &k, 1);
+	write(1, &l, 1);
+	write(1, &m, 1);
+	write(1, &o, 1);
+	write(1, &p, 1);
+	write(1, &q, 1);
+	write(1, &r, 1);
+	write(1, &s, 1);
+	write(1, &t, 1);
+	write(1, &u, 1);
+	write(1, &v, 1);
+	write(1, &w, 1);
+	write(1, &x, 1);
+	write(1, &y, 1);
+	write(1, &z, 1);
+	write(1, &a, 1);
+	write(1, &b, 1);
+	write(1, &c, 1);
+	write(1, &d, 1);
+	write(1, &e, 1);
+	write(1, &f, 1);
+	write(1, &g, 1);
+	write(1, &h, 1);
+}
+void print_int(va_list ap)
+{
+	int n;
+
+	n = va_arg(ap, int);
+	write(1, &n, 1);
 }
