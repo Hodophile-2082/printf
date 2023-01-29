@@ -25,8 +25,5 @@ if (FLAGS_CH[j] == 0)
 break;
 }
 *i = curr_i - 1;
-			return (flags);
-
+return (flags);
 }
-
-
