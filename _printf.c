@@ -1,168 +1,61 @@
 #include "main.h"
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
+
+void print_buffer(char buffer[], int *buff_ind);
+
 /**
- * _printf - produces output according to a format
- * @format: character string
- *
- * Return: number of characters printed
+ * _printf - Printf function
+ * @format: format
+ * Return: Printed chars
  */
 int _printf(const char *format, ...)
 {
-	va_list ap;
-	int i, j, count;
-	char *str, *sep;
+	int i, printed = 0, printed_chars = 0;
+	int flags, width, precision, size, buff_ind = 0;
+	va_list list;
+	char buffer[BUFF_SIZE];
 
-	type_t types[] = {
-		{"c", print_char},
-		{"s", print_string},
-		{"%", print_percent},
-		{"b", print_binary},
-		{"d", print_int},
-		{"i", print_int},
-		{NULL, NULL}
-	};
-	va_start(ap, format);
-	i = 0;
-	count = 0;
-	while (format != NULL && format[i] != '\0')
+	if (format == NULL)
+		return (-1);
+	va_start(list, format);
+
+	for (i = 0; format && format[i] != '\0'; i++)
 	{
-		if (format[i] == '%')
+		if (format[i] != '%')
 		{
-			j = 0;
-			while (types[j].t != NULL)
-			{
-				if (format[i + 1] == types[j].t[0])
-				{
-					str = "";
-					sep = "";
-					if (i == 0)
-						str = "";
-					else if (format[i + 1] == '\0')
-						sep = "";
-					printf("%s", sep);
-					types[j].f(ap);
-					sep = "";
-					count++;
-					i++;
-					break;
-				}
-				j++;
-			}
+			buffer[buff_ind++] = format[i];
+			if (buff_ind == BUFF_SIZE)
+				print_buffer(buffer, &buff_ind);
+			/* write(1, &format[i], 1) */
+			printed_chars++;
 		}
 		else
 		{
-			str = "";
-			sep = "";
-			if (i == 0)
-				str = "";
-			else if (format[i + 1] == '\0')
-				sep = "";
-			printf("%s%c", sep, format[i]);
-			count++;
+			print_buffer(buffer, &buff_ind);
+			flags = get_flags(format, &i);
+			width = get_width(format, &i, list);
+			precision = get_precision(format, &i, list);
+			size = get_size(format, &i);
+			++i;
+			printed = handle_print(format, &i, list, buffer, flags, width, precision, size);
+			if (printed == -1)
+				return (-1);
+			printed_chars += printed;
 		}
-		i++;
 	}
-	printf("\n");
-	va_end(ap);
-	return (count);
-}
-/**
- * printf_char - prints a character
- * @ap: list of arguments
- */
-void print_char(va_list ap)
-{
-	write(1, &ap, 1);
-}
-/**
- * print_string - prints a string
- * @ap: list of arguments
- */
-void print_string(va_list ap)
-{
-	char *str;
 
-	str = va_arg(ap, char *);
-	if (str == NULL)
-		str = "(nil)";
-	write(1, str, strlen(str));
+	print_buffer(buffer, &buff_ind);
+	va_end(list);
+	return (printed_chars);
 }
 /**
- * print_percent - prints a percent
- * @ap: list of arguments
+ * print_buffer - Prints the contents of the buffer if it exists
+ * @buffer: Array of chars
+ * @buff_ind: index at which to add next char, represents the length
  */
-void print_percent(va_list ap)
+void print_buffer(char buffer[], int *buff_ind)
 {
-	write(1, "%", 1);
-}
-/**
- * print_binary - prints a number in binary
- * @ap: list of arguments
- */
-void print_binary(va_list ap)
-{
-	unsigned int n, i, j, k, l, m, o, p, q, r, s, t, u, v, w, x, y, z;
-	unsigned int a, b, c, d, e, f, g, h;
+	if (*buff_ind > 0)
+		write(1, &buffer[0], *buff_ind);
 
-	n = va_arg(ap, unsigned int);
-	i = n >> 31;
-	j = n >> 30;
-	k = n >> 29;
-	l = n >> 28;
-	m = n >> 27;
-	o = n >> 26;
-	p = n >> 25;
-	q = n >> 24;
-	r = n >> 23;
-	s = n >> 22;
-	t = n >> 21;
-	u = n >> 20;
-	v = n >> 19;
-	w = n >> 18;
-	x = n >> 17;
-	y = n >> 16;
-	z = n >> 15;
-	a = n >> 14;
-	b = n >> 13;
-	c = n >> 12;
-	d = n >> 11;
-	e = n >> 10;
-	f = n >> 9;
-	g = n >> 8;
-	h = n >> 7;
-	
-	write(1, &i, 1);
-	write(1, &j, 1);
-	write(1, &k, 1);
-	write(1, &l, 1);
-	write(1, &m, 1);
-	write(1, &o, 1);
-	write(1, &p, 1);
-	write(1, &q, 1);
-	write(1, &r, 1);
-	write(1, &s, 1);
-	write(1, &t, 1);
-	write(1, &u, 1);
-	write(1, &v, 1);
-	write(1, &w, 1);
-	write(1, &x, 1);
-	write(1, &y, 1);
-	write(1, &z, 1);
-	write(1, &a, 1);
-	write(1, &b, 1);
-	write(1, &c, 1);
-	write(1, &d, 1);
-	write(1, &e, 1);
-	write(1, &f, 1);
-	write(1, &g, 1);
-	write(1, &h, 1);
-}
-void print_int(va_list ap)
-{
-	int n;
-
-	n = va_arg(ap, int);
-	write(1, &n, 1);
+	*buff_ind = 0;
 }
